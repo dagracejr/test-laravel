@@ -49,8 +49,7 @@ Route::get('axie/battle-history', function(Request $request) {
         $req = $client->get($url, $headers);
         $response = json_decode($req->getBody()->getContents(), true);
         if (isset($response['battles']) && isset($response['battles'])) {
-            $battles = $response['battles'];
-            return $battles;
+            return $response;
         } else {
             return false;
         }
