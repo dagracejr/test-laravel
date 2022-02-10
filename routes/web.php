@@ -48,12 +48,13 @@ Route::get('axie/battle-history', function(Request $request) {
     try {
         $req = $client->get($url, $headers);
         $response = json_decode($req->getBody()->getContents(), true);
-        if (isset($response['battles']) && isset($response['battles'])) {
+
+        if (isset($response['battles']) || is_null($response['battles'])) {
             return $response;
         } else {
-            return false;
+            return response()->json(['message' => 'Not Found'], 404);
         }
     } catch (\Throwable $th) {
-        return false;
+        return response()->json(['message' => 'Not Found'], 404);
     }
 });
