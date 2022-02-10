@@ -38,8 +38,7 @@ Route::get('gameapi/slp/details', function(Request $request) {
 
 Route::get('axie/battle-history', function(Request $request) {
     $baseUri = "https://tracking.skymavis.com/battle-history?type=pvp&player_id={RAW_ADDRESS}";
-    $rawAddress = '0x'.substr($request->ronin_address, 6);
-    $url = str_replace('{RAW_ADDRESS}', $rawAddress, $baseUri);
+    $url = str_replace('{RAW_ADDRESS}', $request->ronin_address, $baseUri);
     $client = new \GuzzleHttp\Client();
     $headers = [
         'headers' => [
