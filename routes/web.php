@@ -35,3 +35,27 @@ Route::get('gameapi/slp/details', function(Request $request) {
             throw new Exception('Failed Fetch API');
         }
 });
+
+Route::get('axie/battle-history', function(Request $request) {
+    $baseUri = "https://tracking.skymavis.com/battle-history?type=pvp&player_id={RAW_ADDRESS}";
+    $rawAddress = '0x'.substr($request->ronin_address, 6);
+    $url = str_replace('{RAW_ADDRESS}', $rawAddress, $baseUri);
+    $client = new \GuzzleHttp\Client();
+    $headers = [
+        'headers' => [
+        'Accept' => 'application/json',
+        ],
+    ];
+    try {
+        $req = $client->get($url, $headers);
+        $response = json_decode($req->getBody()->getContents(), true);
+        if (isset($response['battles']) && isset($response['battles'])) {
+            $battles = $response['battles'];
+            return $battles;
+        } else {
+            return false;
+        }
+    } catch (\Throwable $th) {
+        return false;
+    }
+});
