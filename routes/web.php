@@ -113,8 +113,9 @@ Route::get('marketplace/update-ronin-profile-name', function(Request $request) {
                 'variables' => json_encode($variables),
             ]
         ]);
-        return true;
+        $response = json_decode($client->getBody()->getContents(), true);
+        return $response;
     } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-        return false;
+        return ['error' => 'Server Error'];
     }
 });
