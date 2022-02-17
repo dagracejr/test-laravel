@@ -58,3 +58,63 @@ Route::get('axie/battle-history', function(Request $request) {
         return response()->json(['message' => 'Not Found'], 404);
     }
 });
+
+Route::get('marketplace/update-ronin-profile-name', function(Request $request) {
+    $name = $request->name;
+    $accessToken = $request->accessToken;
+    $graphqlEndpoint = 'https://graphql-gateway.axieinfinity.com/graphql';
+    $variables = [
+        'name' => $name
+    ];
+
+    $query = 'mutation UpdateProfileName($name: String!) {
+        updateProfileName(name: $name) {
+            accountProfile {
+            ...ProfileBrief
+            __typename
+            }
+            __typename
+        }
+        }
+
+        fragment ProfileBrief on AccountProfile {
+        accountId
+        addresses {
+            ...Addresses
+            __typename
+        }
+        email
+        activated
+        name
+        settings {
+            unsubscribeNotificationEmail
+            __typename
+        }
+        __typename
+        }
+
+        fragment Addresses on NetAddresses {
+        ethereum
+        tomo
+        loom
+        ronin
+        __typename
+    }';
+
+    try {
+        $client = new \GuzzleHttp\Client();
+        $client->request('POST', $graphqlEndpoint, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer '. $accessToken
+            ],
+            'json' => [
+                'query' => $query,
+                'variables' => json_encode($variables),
+            ]
+        ]);
+        return true;
+    } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+        return false;
+    }
+});
